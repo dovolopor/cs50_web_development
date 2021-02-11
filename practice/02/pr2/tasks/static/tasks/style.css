@@ -1,0 +1,8 @@
+h1, h2{color: royalblue;}
+body{text-align: center;}
+header, footer {height: 30px; width: 100%; background-color: black;}
+
+header {margin-bottom: 20px;}
+footer {margin-top: 20px;}
+
+.navLink{margin: 30px;}
