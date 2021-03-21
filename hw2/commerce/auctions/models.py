@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import datetime
+from datetime import datetime
 
 
 class User(AbstractUser):
@@ -12,8 +12,8 @@ class Auction(models.Model):
     imagePath = models.CharField(max_length=1024, null=True, blank=True)
     category = models.CharField(max_length=64, null=True, blank=True)
     openningPrice = models.IntegerField(default=0)
-    startTime = models.TimeField(default = datetime.datetime.now())
-    endTime = models.TimeField(default=datetime.datetime.now())
+    startTime = models.DateTimeField(default = datetime.now, auto_now=False, blank= False)
+    endTime = models.DateTimeField(default= datetime.now, auto_now=False, blank=False)
 
     def __str__(self):
         return f"{self.title}"

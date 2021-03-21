@@ -2,11 +2,10 @@
 
 {% block body %}
 
-    <h2>Active Listings</h2>
-
 <ul>
+
 {% for auction in listings %}
-    <li> {{auction}} </li>
+    <li> {{auction}} {{auction.startTime}} {{auction.endTime}} </li>
 {% empty %}
     Currently there are no active listings
 {% endfor %}

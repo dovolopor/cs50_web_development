@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
+from datetime import datetime, timedelta
 from .models import User, Auction
 
 
@@ -76,6 +76,8 @@ def createListing(request):
 
         try:
             newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openningPrice= openningBid)
+            newAuction.startTime = datetime.now()
+            newAuction.endTime = newAuction.startTime + timedelta(weeks=1)
             newAuction.save()
         except IntegrityError:
             return render(request, "auctions/index.html", {
