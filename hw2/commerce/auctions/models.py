@@ -15,6 +15,7 @@ class Auction(models.Model):
     startTime = models.DateTimeField(default = datetime.now, auto_now=False, blank= False)
     endTime = models.DateTimeField(default= datetime.now, auto_now=False, blank=False)
 
+
     def __str__(self):
         return f"{self.title}"
 
@@ -24,7 +25,7 @@ class Bid(models.Model):
     price = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.price} by {self.user}"
+        return f"${self.price} by {self.user} for {self.auction.title}"
     
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")

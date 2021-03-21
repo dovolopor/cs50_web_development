@@ -1,14 +1,35 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
-<ul>
+<h2>Active Listings</h2>
 
 {% for auction in listings %}
-    <li> {{auction}} {{auction.startTime}} {{auction.endTime}} </li>
+    <div class="container card" style="margin: 5px; padding: 5px;">
+        <div class="row">
+          <div class="col-sm">
+            <img height="250px" style="max-width: 320px;" src={{auction.imagePath}} onerror="this.onerror=null; this.src='https://e-bindalli.com.tr/sitefile/images/no-product.png'" alt="No product image">
+          </div>
+          <div class="col-sm">
+              <h3>{{auction.title}}</h3>
+                
+                {% if auction.price == None %}
+                    <h5>Price: ${{auction.openningPrice}}</h5>
+                {% else %}
+                    <h5>Price: ${{auction.price}}</h5>
+                {% endif %}
+                <p>
+                    Ends at {{auction.endTime}}
+                </p>
+             <p class="text-muted">
+                Created {{auction.startTime}}
+              </p>
+
+              <p>{{auction.description}}</p>
+          </div>
+        </div>
+      </div>
 {% empty %}
     Currently there are no active listings
 {% endfor %}
-</ul>
     
 {% endblock %}

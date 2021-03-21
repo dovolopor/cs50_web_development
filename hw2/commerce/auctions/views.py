@@ -5,11 +5,12 @@ from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime, timedelta
 from .models import User, Auction
-
+from django.db.models import Max, F, Count
 
 def index(request):
+    now = datetime.now()
     return render(request, "auctions/index.html", {
-                "listings": Auction.objects.all()
+                "listings": Auction.objects.filter(endTime__gt = now).annotate(price=Max('bids__price'))
             })
 
 
