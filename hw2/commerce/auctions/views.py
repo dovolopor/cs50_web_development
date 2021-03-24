@@ -79,7 +79,7 @@ def createListing(request):
         # TODO do some cheking
 
         try:
-            newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openingPrice= openingBid)
+            newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openingPrice= openingBid, creator= request.user)
             newAuction.startTime = datetime.now()
             newAuction.endTime = newAuction.startTime + timedelta(weeks=1)
             newAuction.save()

@@ -10,6 +10,7 @@
             <img height="250px" style="max-width: 320px;" src={{auction.imagePath}} onerror="this.onerror=null; this.src='https://e-bindalli.com.tr/sitefile/images/no-product.png'" alt="No product image">
           </div>
           <div class="col-sm">
+           <h6>Created By: <span>{{auction.creator}}</span></h6>
                 {% if auction.price == None %}
                     <h5>Price: ${{auction.openingPrice}}</h5>
                 {% else %}
@@ -18,9 +19,9 @@
                 <p>
                     Ends at {{auction.endTime}}
                 </p>
-             <p class="text-muted">
+            <h6 class="text-muted">
                 Created {{auction.startTime}}
-              </p>
+            </h6>
 
               <p>{{auction.description}}</p>
           </div>
