@@ -6,6 +6,7 @@ from django.urls import reverse
 from datetime import datetime, timedelta
 from .models import User, Auction
 from django.db.models import Max, F, Count
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     now = datetime.now()
@@ -65,18 +66,20 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
+@login_required
 def createListing(request):
     if request.method == "POST":
         title = request.POST["title"]
         description = request.POST["description"]
         category = request.POST["category"]
         imageUrl = request.POST["imageUrl"]
-        openningBid = float(request.POST["openningBid"]) * 100
+        openingBid = float(request.POST["openingBid"]) * 100
         
         # TODO do some cheking
 
         try:
-            newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openningPrice= openningBid)
+            newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openingPrice= openingBid)
             newAuction.startTime = datetime.now()
             newAuction.endTime = newAuction.startTime + timedelta(weeks=1)
             newAuction.save()

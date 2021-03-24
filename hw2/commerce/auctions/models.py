@@ -11,7 +11,7 @@ class Auction(models.Model):
     description = models.CharField(max_length=1024)
     imagePath = models.CharField(max_length=1024, null=True, blank=True)
     category = models.CharField(max_length=64, null=True, blank=True)
-    openningPrice = models.IntegerField(default=0)
+    openingPrice = models.IntegerField(default=0)
     startTime = models.DateTimeField(default = datetime.now, auto_now=False, blank= False)
     endTime = models.DateTimeField(default= datetime.now, auto_now=False, blank=False)
 
