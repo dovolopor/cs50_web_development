@@ -1,0 +1,19 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia - {{title}}
+{% endblock %}
+
+{% block body %}
+    <section>
+        <a href="{% url 'encyclopedia:edit' entName=title %}" type="button" class="btn btn-outline-primary float-right mt-1 mr-3">✍</a>
+        {% if content == None %}
+            There is no entry for title "{{title}}", Click here to add yourself
+        {%else%}
+            {{ content |safe }}
+        {%endif%}
+    </section>
+
+
+    
+{% endblock %}
