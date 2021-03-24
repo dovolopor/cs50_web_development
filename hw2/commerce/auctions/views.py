@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime, timedelta
@@ -95,4 +95,15 @@ def createListing(request):
     else:
         return render(request, "auctions/createListing.html", {
                 "message": "No message"
+            })
+
+def listing(request, auctionId):
+    
+    auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
+
+    if auction == None:
+        return HttpResponseNotFound()
+    else:
+        return render(request, "auctions/listing.html", {
+                "auction": auction
             })
