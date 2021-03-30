@@ -24,6 +24,14 @@
             </h6>
 
               <p>{{auction.description}}</p>
+
+              <a href="{% url 'watchListing' auctionId=auction.pk %}">
+                {% if isWatched %}
+                    Stop watching
+                {% else %}
+                    Add to the watch list
+                {% endif %}
+            </a>
           </div>
         </div>
       </div>
