@@ -4,14 +4,15 @@ from datetime import datetime
 
 
 class User(AbstractUser):
-    pass
+    watchlist = models.ManyToManyField('Auction')
 
 class Auction(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=1024)
     imagePath = models.CharField(max_length=1024, null=True, blank=True)
+    creator = models.ForeignKey(User,on_delete=models.CASCADE, related_name="auctions")
     category = models.CharField(max_length=64, null=True, blank=True)
-    openningPrice = models.IntegerField(default=0)
+    openingPrice = models.IntegerField(default=0)
     startTime = models.DateTimeField(default = datetime.now, auto_now=False, blank= False)
     endTime = models.DateTimeField(default= datetime.now, auto_now=False, blank=False)
 
