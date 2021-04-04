@@ -20,6 +20,9 @@ class Auction(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+    def priceStr(self):
+        return "3"
+
 class Bid(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE, related_name="bids")
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="bids")

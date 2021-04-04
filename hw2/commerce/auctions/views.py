@@ -105,7 +105,6 @@ def listing(request, auctionId):
     global isWatched
     
     auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
-    isWatched = not isWatched
 
     if auction == None:
         return HttpResponseNotFound()
@@ -120,12 +119,4 @@ def watchListing(request, auctionId):
     global isWatched
     # TODO implement here
     isWatched = not isWatched
-    auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
-
-    if auction == None:
-        return HttpResponseNotFound()
-    else:
-        return render(request, "auctions/listing.html", {
-                "auction": auction,
-                "isWatched": isWatched
-            })
+    return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))

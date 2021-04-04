@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
+{% load int_to_money %}
 
     <div style="margin: 5px; padding: 5px;">
         <h3>{{auction.title}}</h3>
@@ -12,9 +12,9 @@
           <div class="col-sm">
            <h6>Created By: <span>{{auction.creator}}</span></h6>
                 {% if auction.price == None %}
-                    <h5>Price: ${{auction.openingPrice}}</h5>
+                    <h5>Price: ${{auction.openingPrice|toMoney}}</h5>
                 {% else %}
-                    <h5>Current Price: ${{auction.price}}</h5>
+                    <h5>Current Price: ${{auction.price|toMoney}}</h5>
                 {% endif %}
                 <p>
                     Ends at {{auction.endTime}}
