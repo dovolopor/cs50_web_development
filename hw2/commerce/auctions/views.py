@@ -98,13 +98,19 @@ def createListing(request):
             })
 
 
-isWatched = True
-
 def listing(request, auctionId):
 
-    global isWatched
-    
     auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
+
+    #todo
+    loggedIn = True
+    isWatched = True
+
+    print(f"önce {isWatched}")
+    if loggedIn:
+        isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
+
+    print(f"sonra {isWatched}")
 
     if auction == None:
         return HttpResponseNotFound()
@@ -114,9 +120,23 @@ def listing(request, auctionId):
                 "isWatched": isWatched
             })
 
+@login_required
 def watchListing(request, auctionId):
 
-    global isWatched
-    # TODO implement here
-    isWatched = not isWatched
+    auction = Auction.objects.get(pk=auctionId)
+    user = User.objects.get(username=request.user.get_username())
+
+    user.watchlist.add(auction)
+
+    return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
+
+
+@login_required
+def stopWatching(request, auctionId):
+
+    auction = Auction.objects.get(pk=auctionId)
+    user = User.objects.get(username=request.user.get_username())
+
+    user.watchlist.remove(auction)
+
     return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))

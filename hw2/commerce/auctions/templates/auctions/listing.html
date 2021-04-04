@@ -25,13 +25,17 @@
 
               <p>{{auction.description}}</p>
 
-              <a href="{% url 'watchListing' auctionId=auction.pk %}">
+              
                 {% if isWatched %}
-                    Stop watching
+                  <a href="{% url 'stopWatching' auctionId=auction.pk %}"> 
+                      Stop watching
+                  </a>
                 {% else %}
-                    Add to the watch list
+                  <a href="{% url 'watchListing' auctionId=auction.pk %}"> 
+                      Add to the watch list
+                  </a>
+                    
                 {% endif %}
-            </a>
           </div>
         </div>
       </div>
