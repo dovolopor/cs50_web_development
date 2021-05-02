@@ -96,7 +96,7 @@ def createListing(request):
 
 def listing(request, auctionId):
     auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
-
+    isWatched = False
     if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
 
@@ -135,8 +135,6 @@ def listing(request, auctionId):
                     "message": "Your bid must be bigger than current price"
                 })
                 
-    
-
     if auction == None:
         return HttpResponseNotFound()
     else:
