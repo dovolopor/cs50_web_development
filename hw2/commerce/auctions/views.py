@@ -96,7 +96,13 @@ def createListing(request):
             })
 
 def listing(request, auctionId):
-    auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
+    auction = Auction.objects.get(pk = auctionId)
+
+    try:
+        maxBid = auction.bids.latest('price')
+    except:
+        maxBid = None
+
     isWatched = False
     if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
@@ -104,7 +110,7 @@ def listing(request, auctionId):
     if request.method == "POST":
         bid = float(request.POST["bid"]) * 100
         # TODO do some cheking
-        price = auction.price
+        price = maxBid.price if maxBid != None else auction.openingPrice
         if price == None:
             price = auction.openingPrice
 
@@ -117,6 +123,7 @@ def listing(request, auctionId):
             except IntegrityError:
                 return render(request, "auctions/listing.html", {
                     "auction": auction,
+                    "maxBid": maxBid,
                     "isWatched": isWatched,
                     "message": "Some Error Happened. Code: VI127"
                 })
@@ -126,6 +133,7 @@ def listing(request, auctionId):
             return render(request, "auctions/listing.html", {
                     "auction": auction,
                     "isWatched": isWatched,
+                    "maxBid": maxBid,
                     "message": "Your bid must be bigger than current price"
                 })
                 
@@ -134,6 +142,7 @@ def listing(request, auctionId):
     else:
         return render(request, "auctions/listing.html", {
                 "auction": auction,
+                "maxBid": maxBid,
                 "isWatched": isWatched
             })
 

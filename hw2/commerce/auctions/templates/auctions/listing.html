@@ -8,6 +8,10 @@
         <div class="alert alert-danger">{{ message }}</div>
 {% endif %}
 
+{% if not auction.isActive and maxBid != None and user.id == maxBid.user.id %}
+        <div class="alert alert-success">You have won this auction!</div>
+{% endif %}
+
     <div style="margin: 5px; padding: 5px;">
         <h3>{{auction.title}}</h3>
         <div class="row">
@@ -16,10 +20,10 @@
           </div>
           <div class="col-sm">
            <h6>Created By: <span>{{auction.creator}}</span></h6>
-                {% if auction.price == None %}
+                {% if maxBid == None %}
                     <h5>Price: ${{auction.openingPrice|toMoney}}</h5>
                 {% else %}
-                    <h5>Current Price: ${{auction.price|toMoney}}</h5>
+                    <h5 style="display: inline-block">Price: ${{maxBid.price|toMoney}} <h6 style="display: inline-block; margin-left:8px">by {{maxBid.user.username}}</h6></h5>
                 {% endif %}
                 <p>
                     Ends at {{auction.endTime|toLocalTime}}
@@ -55,7 +59,7 @@
                 <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
                   {% csrf_token %}
                   <div class="form-group">
-                      <input  name="bid" required type="number" autofocus min={% if auction.price == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{auction.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
+                      <input  name="bid" required type="number" autofocus min={% if maxBid == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{maxBid.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
                   </div>
 
                   <input class="btn btn-primary" type="submit" value="Bid">
