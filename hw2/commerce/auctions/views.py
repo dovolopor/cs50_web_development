@@ -7,9 +7,10 @@ from datetime import datetime, timedelta
 from .models import User, Auction, Bid
 from django.db.models import Max, F, Count
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 def index(request):
-    now = datetime.now()
+    now = timezone.now()
     return render(request, "auctions/index.html", {
                 "listings": Auction.objects.filter(endTime__gt = now).annotate(price=Max('bids__price'))
             })
@@ -80,7 +81,7 @@ def createListing(request):
 
         try:
             newAuction = Auction(title=title, description=description, imagePath=imageUrl, category=category, openingPrice= openingBid, creator= request.user)
-            newAuction.startTime = datetime.now()
+            newAuction.startTime = timezone.now()
             newAuction.endTime = newAuction.startTime + timedelta(weeks=1)
             newAuction.save()
         except IntegrityError:
@@ -100,9 +101,6 @@ def listing(request, auctionId):
     if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
 
-    print("Geldi 1")
-    print("Mtod: " + request.method)
-    
     if request.method == "POST":
         bid = float(request.POST["bid"]) * 100
         # TODO do some cheking
@@ -110,15 +108,11 @@ def listing(request, auctionId):
         if price == None:
             price = auction.openingPrice
 
-        print("Geldi 2")
-
         if bid > price: 
             #valid bid, do things
-            print("Geldi 3")
             try:
                 user = User.objects.get(pk=request.user.id)
                 newBid = Bid(user = user, auction = auction, price = bid)
-                print("Geldi 4")
                 newBid.save()
             except IntegrityError:
                 return render(request, "auctions/listing.html", {
@@ -161,5 +155,14 @@ def stopWatching(request, auctionId):
     user = User.objects.get(username=request.user.get_username())
 
     user.watchlist.remove(auction)
+
+    return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
+
+@login_required
+def closeAuction(request, auctionId):
+
+    auction = Auction.objects.get(pk=auctionId)
+    auction.endTime = timezone.now()
+    auction.save()
 
     return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))

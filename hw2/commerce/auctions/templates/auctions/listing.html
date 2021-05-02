@@ -2,6 +2,7 @@
 
 {% block body %}
 {% load int_to_money %}
+{% load local_time %}
 
 {% if message %}
         <div class="alert alert-danger">{{ message }}</div>
@@ -21,15 +22,26 @@
                     <h5>Current Price: ${{auction.price|toMoney}}</h5>
                 {% endif %}
                 <p>
-                    Ends at {{auction.endTime}}
+                    Ends at {{auction.endTime|toLocalTime}}
                 </p>
             <h6 class="text-muted">
-                Created {{auction.startTime}}
+                Created {{auction.startTime|toLocalTime}}
             </h6>
 
               <p>{{auction.description}}</p>
 
+              <!-- User is the creator -->
               {% if user.is_authenticated %}
+                {% if user.id == auction.creator.id %}
+                  {% if auction.isActive %}
+                    <a href="{% url 'closeAuction' auctionId=auction.pk %}"> 
+                        Close The Auction
+                    </a>
+                  {% else %}
+                    <p> Auction is Closed </p>
+                  {% endif %}
+                {% else %}
+                 
                 {% if isWatched %}
                   <a href="{% url 'stopWatching' auctionId=auction.pk %}"> 
                       Stop watching
@@ -38,18 +50,17 @@
                   <a href="{% url 'watchListing' auctionId=auction.pk %}"> 
                       Add to the watch list
                   </a>
-                    
                 {% endif %}
 
                 <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input  name="bid" required type="number" autofocus min={% if auction.price == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{auction.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
-                    </div>
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <input  name="bid" required type="number" autofocus min={% if auction.price == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{auction.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
+                  </div>
 
-                    <input class="btn btn-primary" type="submit" value="Bid">
+                  <input class="btn btn-primary" type="submit" value="Bid">
                 </form>
-
+                {% endif %}
               {% endif %}
           </div>
         </div>
