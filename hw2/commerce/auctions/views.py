@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime, timedelta
-from .models import User, Auction
+from .models import User, Auction, Bid
 from django.db.models import Max, F, Count
 from django.contrib.auth.decorators import login_required
 
@@ -89,28 +89,53 @@ def createListing(request):
             })
         return HttpResponseRedirect(reverse("index"))
 
-
-        
-
     else:
         return render(request, "auctions/createListing.html", {
                 "message": "No message"
             })
 
-
 def listing(request, auctionId):
-
     auction = Auction.objects.filter(pk = auctionId).annotate(price=Max('bids__price')).first()
 
-    #todo
-    loggedIn = True
-    isWatched = True
-
-    print(f"önce {isWatched}")
-    if loggedIn:
+    if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
 
-    print(f"sonra {isWatched}")
+    print("Geldi 1")
+    print("Mtod: " + request.method)
+    
+    if request.method == "POST":
+        bid = float(request.POST["bid"]) * 100
+        # TODO do some cheking
+        price = auction.price
+        if price == None:
+            price = auction.openingPrice
+
+        print("Geldi 2")
+
+        if bid > price: 
+            #valid bid, do things
+            print("Geldi 3")
+            try:
+                user = User.objects.get(pk=request.user.id)
+                newBid = Bid(user = user, auction = auction, price = bid)
+                print("Geldi 4")
+                newBid.save()
+            except IntegrityError:
+                return render(request, "auctions/listing.html", {
+                    "auction": auction,
+                    "isWatched": isWatched,
+                    "message": "Some Error Happened. Code: VI127"
+                })
+            return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
+                
+        else:
+            return render(request, "auctions/listing.html", {
+                    "auction": auction,
+                    "isWatched": isWatched,
+                    "message": "Your bid must be bigger than current price"
+                })
+                
+    
 
     if auction == None:
         return HttpResponseNotFound()

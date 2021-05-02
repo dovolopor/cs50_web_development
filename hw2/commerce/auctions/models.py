@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime
+from auctions.templatetags.int_to_money import toMoney
 
 
 class User(AbstractUser):
@@ -29,7 +30,7 @@ class Bid(models.Model):
     price = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"${self.price} by {self.user} for {self.auction.title}"
+        return f"${toMoney(self.price)} by {self.user} for {self.auction.title}"
     
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")

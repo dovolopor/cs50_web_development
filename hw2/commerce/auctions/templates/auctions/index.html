@@ -5,6 +5,10 @@
 {% load int_to_money %}
 <h2>Active Listings</h2>
 
+{% if message %}
+        <div class="alert">{{ message }}</div>
+{% endif %}
+
 {% for auction in listings %}
     <div class="container card" style="margin: 5px; padding: 5px;">
         <div class="row">

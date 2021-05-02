@@ -3,6 +3,10 @@
 {% block body %}
 {% load int_to_money %}
 
+{% if message %}
+        <div class="alert alert-danger">{{ message }}</div>
+{% endif %}
+
     <div style="margin: 5px; padding: 5px;">
         <h3>{{auction.title}}</h3>
         <div class="row">
@@ -25,7 +29,7 @@
 
               <p>{{auction.description}}</p>
 
-              
+              {% if user.is_authenticated %}
                 {% if isWatched %}
                   <a href="{% url 'stopWatching' auctionId=auction.pk %}"> 
                       Stop watching
@@ -36,6 +40,17 @@
                   </a>
                     
                 {% endif %}
+
+                <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input  name="bid" required type="number" autofocus min={% if auction.price == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{auction.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Bid">
+                </form>
+
+              {% endif %}
           </div>
         </div>
       </div>
