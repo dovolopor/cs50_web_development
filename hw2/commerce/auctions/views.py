@@ -103,6 +103,7 @@ def listing(request, auctionId):
     except:
         maxBid = None
 
+
     isWatched = False
     if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
@@ -111,6 +112,7 @@ def listing(request, auctionId):
         bid = float(request.POST["bid"]) * 100
         # TODO do some cheking
         price = maxBid.price if maxBid != None else auction.openingPrice
+
         if price == None:
             price = auction.openingPrice
 
@@ -143,7 +145,8 @@ def listing(request, auctionId):
         return render(request, "auctions/listing.html", {
                 "auction": auction,
                 "maxBid": maxBid,
-                "isWatched": isWatched
+                "isWatched": isWatched,
+                "comments": auction.comments.all()
             })
 
 @login_required

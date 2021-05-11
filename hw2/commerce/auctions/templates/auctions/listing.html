@@ -68,6 +68,20 @@
               {% endif %}
           </div>
         </div>
+        <!-- Comment Row -->
+        <div>
+            <h4 style="margin-top: 20px"> Comments </h4>
+            {% for comment in comments %}
+            <div class="container card" style="margin: 5px; padding: 5px;">
+              <h6> {{comment.user}}</h6>
+              <p> {{comment.text}} </p>
+            </div>
+            {% empty %}
+            <p style="margin-top: 10px">
+              No comments yet
+            </p>
+            {% endfor %}
+        </div>
       </div>
     
 {% endblock %}
