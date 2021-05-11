@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime, timedelta
-from .models import User, Auction, Bid
+from .models import User, Auction, Bid, Comment
 from django.db.models import Max, F, Count
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -107,38 +107,69 @@ def listing(request, auctionId):
     isWatched = False
     if request.user.is_authenticated:
         isWatched = auction.watched_by.filter(username= request.user.get_username()).exists()
-
+    
     if request.method == "POST":
-        bid = float(request.POST["bid"]) * 100
-        # TODO do some cheking
-        price = maxBid.price if maxBid != None else auction.openingPrice
+        if 'bid' in request.POST:
+            print("It came to bids")
+            bid = float(request.POST["bid"]) * 100
+            # TODO do some cheking
+            price = maxBid.price if maxBid != None else auction.openingPrice
 
-        if price == None:
-            price = auction.openingPrice
+            if price == None:
+                price = auction.openingPrice
 
-        if bid > price: 
-            #valid bid, do things
+            if bid > price: 
+                #valid bid, do things
+                try:
+                    user = User.objects.get(pk=request.user.id)
+                    newBid = Bid(user = user, auction = auction, price = bid)
+                    newBid.save()
+                except IntegrityError:
+                    return render(request, "auctions/listing.html", {
+                        "auction": auction,
+                        "maxBid": maxBid,
+                        "isWatched": isWatched,
+                        "message": "Some Error Happened. Code: VI127",
+                        "comments": auction.comments.all()
+                    })
+                return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
+                    
+            else:
+                return render(request, "auctions/listing.html", {
+                        "auction": auction,
+                        "isWatched": isWatched,
+                        "maxBid": maxBid,
+                        "message": "Your bid must be bigger than current price",
+                        "comments": auction.comments.all()
+                    })
+    
+        elif 'comment' in request.POST:
+            print("Comment was: " + request.POST["comment"])
+            text = request.POST["comment"]
+            if len(text) < 3:
+               return render(request, "auctions/listing.html", {
+                    "auction": auction,
+                        "isWatched": isWatched,
+                        "maxBid": maxBid,
+                        "message": "Comment shuold be at least 3 letters",
+                        "comments": auction.comments.all()
+                })
             try:
                 user = User.objects.get(pk=request.user.id)
-                newBid = Bid(user = user, auction = auction, price = bid)
-                newBid.save()
+                newComment = Comment(user = user, auction = auction, text = text)
+                newComment.save()
             except IntegrityError:
                 return render(request, "auctions/listing.html", {
                     "auction": auction,
-                    "maxBid": maxBid,
-                    "isWatched": isWatched,
-                    "message": "Some Error Happened. Code: VI127"
+                        "isWatched": isWatched,
+                        "maxBid": maxBid,
+                        "message": "Some Error happened. Error No: VI166",
+                        "comments": auction.comments.all()
                 })
             return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
-                
         else:
-            return render(request, "auctions/listing.html", {
-                    "auction": auction,
-                    "isWatched": isWatched,
-                    "maxBid": maxBid,
-                    "message": "Your bid must be bigger than current price"
-                })
-                
+            return HttpResponseRedirect(reverse("listing", kwargs={'auctionId':auctionId}))
+
     if auction == None:
         return HttpResponseNotFound()
     else:

@@ -70,6 +70,17 @@
         </div>
         <!-- Comment Row -->
         <div>
+            {% if user.is_authenticated %}
+                <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <textarea name="comment" rows="4" cols="50" min placeholder="Add your comment here..." minlength="3"></textarea>
+                  </div>
+                  <input class="align-right btn btn-primary" type="submit" value="Submit">
+                </form>
+            {% endif %}
+            
+
             <h4 style="margin-top: 20px"> Comments </h4>
             {% for comment in comments %}
             <div class="container card" style="margin: 5px; padding: 5px;">
