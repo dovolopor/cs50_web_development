@@ -105,6 +105,21 @@ def watchList(request):
                 "listings": user.watchlist.all()
             })
 
+def categories(request):
+    cats = ["asd", "asd", "asd"]
+    return render(request, "auctions/categories.html", {
+                "categories": Auction.objects.values("category").distinct().all()
+            })
+
+def category(request, category):
+
+    now = timezone.now()
+
+    return render(request, "auctions/index.html", {
+                "title": "Category: " + category,
+                "listings": Auction.objects.filter(category = category, endTime__gt = now)
+            })
+    
 
 def listing(request, auctionId):
     auction = Auction.objects.get(pk = auctionId)

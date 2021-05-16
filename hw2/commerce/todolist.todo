@@ -1,0 +1,4 @@
+add categories btn and page
+List all categories in that page
+make a view function gets a categoryName
+check to make this categoryname with non addressbar letters
