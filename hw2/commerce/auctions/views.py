@@ -8,6 +8,7 @@ from .models import User, Auction, Bid, Comment
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from urllib.parse import unquote
 
 def index(request):
     now = timezone.now()
@@ -99,7 +100,6 @@ def createListing(request):
 @login_required
 def watchList(request):
     user = User.objects.get(pk=request.user.id)
-
     return render(request, "auctions/index.html", {
                 "title": "Watchlist",
                 "listings": user.watchlist.all()
@@ -112,8 +112,8 @@ def categories(request):
             })
 
 def category(request, category):
-
     now = timezone.now()
+    category = unquote(category)
 
     return render(request, "auctions/index.html", {
                 "title": "Category: " + category,

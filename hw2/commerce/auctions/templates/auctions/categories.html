@@ -6,7 +6,8 @@
     <ul class="nav flex-column">
         {% for category in categories %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'category' category=category.category %}">{{category.category}}</a>
+                {% url 'category' category=category.category as url %}
+                <a class="nav-link" href="{{url | urlencode}}">{{category.category}}</a>
             </li>
         {% empty %}
             Empty
