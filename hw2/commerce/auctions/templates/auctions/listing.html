@@ -26,7 +26,11 @@
                     <h5 style="display: inline-block">Price: ${{maxBid.price|toMoney}} <h6 style="display: inline-block; margin-left:8px">by {{maxBid.user.username}}</h6></h5>
                 {% endif %}
                 <p>
+                  {% if auction.isActive %}
                     Ends at {{auction.endTime|toLocalTime}}
+                  {% else %}
+                    Ended at {{auction.endTime|toLocalTime}}
+                  {% endif %}
                 </p>
             <h6 class="text-muted">
                 Created {{auction.startTime|toLocalTime}}
@@ -34,8 +38,8 @@
 
               <p>{{auction.description}}</p>
 
-              <!-- User is the creator -->
               {% if user.is_authenticated %}
+                <!-- User is the creator -->
                 {% if user.id == auction.creator.id %}
                   {% if auction.isActive %}
                     <a href="{% url 'closeAuction' auctionId=auction.pk %}"> 
@@ -56,14 +60,16 @@
                   </a>
                 {% endif %}
 
-                <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
-                  {% csrf_token %}
-                  <div class="form-group">
-                      <input  name="bid" required type="number" autofocus min={% if maxBid == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{maxBid.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
-                  </div>
+                  {% if auction.isActive %}
+                    <form action="{% url 'listing' auctionId=auction.pk %}" method="post" style="margin-top:30px">
+                      {% csrf_token %}
+                      <div class="form-group">
+                          <input  name="bid" required type="number" autofocus min={% if maxBid == None %}{{auction.openingPrice|toNextValMoney}}{% else %}{{maxBid.price|toNextValMoney}}{% endif %} step="0.01" placeholder="Your bid" />
+                      </div>
 
-                  <input class="btn btn-primary" type="submit" value="Bid">
-                </form>
+                      <input class="btn btn-primary" type="submit" value="Bid">
+                    </form>
+                  {% endif %}
                 {% endif %}
               {% endif %}
           </div>

@@ -3,9 +3,9 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
-from datetime import datetime, timedelta
+from datetime import timedelta
 from .models import User, Auction, Bid, Comment
-from django.db.models import Max, F, Count
+from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
@@ -94,6 +94,15 @@ def createListing(request):
         return render(request, "auctions/createListing.html", {
                 "message": "No message"
             })
+
+@login_required
+def watchList(request):
+    user = User.objects.get(pk=request.user.id)
+
+    return render(request, "auctions/watchList.html", {
+                "listings": user.watchlist.all()
+            })
+
 
 def listing(request, auctionId):
     auction = Auction.objects.get(pk = auctionId)
