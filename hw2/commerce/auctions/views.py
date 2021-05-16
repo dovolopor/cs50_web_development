@@ -12,6 +12,7 @@ from django.utils import timezone
 def index(request):
     now = timezone.now()
     return render(request, "auctions/index.html", {
+                "title": "Active Listings",
                 "listings": Auction.objects.filter(endTime__gt = now).annotate(price=Max('bids__price'))
             })
 
@@ -99,7 +100,8 @@ def createListing(request):
 def watchList(request):
     user = User.objects.get(pk=request.user.id)
 
-    return render(request, "auctions/watchList.html", {
+    return render(request, "auctions/index.html", {
+                "title": "Watchlist",
                 "listings": user.watchlist.all()
             })
 
