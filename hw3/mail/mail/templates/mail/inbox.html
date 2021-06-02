@@ -17,7 +17,13 @@
             <p id="emails-emptytext">No mails in this box</p>
             <div id="emails-list" class="col-4">
             </div>
-            <div id="emails-show" class="col-8"></div>
+            <div id="emails-show" class="col-8 card" style="padding-top: 8px">
+                <span class="text-muted" style="float:right; font-size:small" id="emails-date"></span>
+                <p style="font-size:smaller"><b>Sender: </b> <span id="emails-sender"></span> </p>
+                <p style="font-size:smaller"><b>Recipients: </b> <span id="emails-recipients"></span></p>
+                <p style="font-size:smaller"><b>Subject: </b> <span id="emails-subject"></span></p>
+                <p id=emails-body></p>
+            </div>
         </div>
     </div>
 

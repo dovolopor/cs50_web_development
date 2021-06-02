@@ -32,7 +32,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view-title').innerHTML = mailbox.charAt(0).toUpperCase() + mailbox.slice(1);
 
-  document.querySelector('#emails-div').style.display = 'none';
+  document.querySelector('#emails-show').style.display = 'none';
   fetch('/emails/' + mailbox)
   .then(response => response.json())
   .then(emails => {
@@ -41,7 +41,6 @@ function load_mailbox(mailbox) {
       // ... do something else with emails ...
 
       fillEmailsView(emails)
-      document.querySelector('#emails-div').style.display = 'flex';
   });
 }
 
@@ -96,7 +95,7 @@ function alertnewMailForm(message, succes)
 function fillEmailsView(emails)
 {
     document.querySelector('#emails-list').innerHTML = "";
-    document.querySelector('#emails-show').innerHTML = "";
+    document.querySelector('#emails-show').style.display = "none";
 
     if(emails.length === 0)
     {
@@ -118,21 +117,33 @@ function fillEmailsView(emails)
       li.innerHTML = email.subject === "" ? "(No subject) from " + email.sender : email.subject;
       li.dataset.mid = email.id;
 
+      if(email.read)
+        li.style.backgroundColor = "lightgrey"
+
       mailListUL.appendChild(li)
     });
     
     document.querySelector('#emails-list').appendChild(mailListUL)
     
-    // make the selected mail 
+    showEmail(emails[0])
 }
 
 function onMailClicked()
 {
-  
-
   fetch('/emails/' + this.dataset.mid)
     .then(response => response.json())
     .then(email => {
-        document.querySelector('#emails-show').innerHTML = JSON.stringify(email)
+        showEmail(email)
   });
+}
+
+function showEmail(email)
+{
+  console.log(email)
+  document.querySelector('#emails-show').style.display = "inline-block";
+  document.querySelector('#emails-sender').innerHTML = email.sender
+  document.querySelector('#emails-recipients').innerHTML = email.recipients
+  document.querySelector('#emails-subject').innerHTML = email.subject
+  document.querySelector('#emails-body').innerHTML = email.body
+  document.querySelector('#emails-date').innerHTML = email.timestamp
 }

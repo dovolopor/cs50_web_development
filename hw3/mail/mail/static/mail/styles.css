@@ -4,12 +4,18 @@ textarea {
 
 .list-group-item
 {
-    border-width: 1px !important;
     border-width: thin;
+    border-width: 1px !important;
     cursor: pointer;
 }
 
 .list-group-item:hover
 {
     border-width: 2px !important;
+}
+
+#emails-show
+{
+    border-width: thin;
+    border-width: 1px !important;
 }
