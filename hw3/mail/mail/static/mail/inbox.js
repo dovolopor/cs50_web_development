@@ -146,4 +146,28 @@ function showEmail(email)
   document.querySelector('#emails-subject').innerHTML = email.subject
   document.querySelector('#emails-body').innerHTML = email.body
   document.querySelector('#emails-date').innerHTML = email.timestamp
+
+  if(!email.read)
+  {
+    markAsRead(email)
+  }
+}
+
+function markAsRead(email)
+{
+    // send server read info
+
+    fetch('/emails/' + email.id, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
+    })
+
+    // update mail in ui
+    document.querySelectorAll('li').forEach(elem => {
+      if(elem.dataset.mid == email.id)
+          elem.style.backgroundColor = "lightgrey"
+    })
+    
 }
