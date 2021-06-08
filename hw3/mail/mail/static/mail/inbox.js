@@ -1,5 +1,6 @@
 var currentMailBox = "";
 var shownMailID = 0;
+var shownMail;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#compose').addEventListener('click', compose_email);
   document.querySelector('#compose-form').onsubmit = sendMail;
   document.querySelector('#archive-btn').onclick = archiveShownMail;
+  document.querySelector('#reply-btn').onclick = replyShownMail;
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -51,12 +53,13 @@ function load_mailbox(mailbox) {
   let archiveBtn = document.querySelector('#archive-btn');
   switch (mailbox) {
     case "inbox":
-      archiveBtn.style.display = "block"
+      archiveBtn.style.display = "inline-block"
       archiveBtn.innerHTML = "Archive"
+      
       break;
 
     case "archive":
-      archiveBtn.style.display = "block"
+      archiveBtn.style.display = "inline-block"
       archiveBtn.innerHTML = "Unarchive"
       break;
   
@@ -118,9 +121,6 @@ function fillEmailsView(emails)
 {
     document.querySelector('#emails-list').innerHTML = "";
     document.querySelector('#emails-show').style.display = "none";
-
-    
-    
     document.querySelector('#emails-emptytext').style.display = "none";
     
     // fill emails list
@@ -143,16 +143,19 @@ function fillEmailsView(emails)
     
     document.querySelector('#emails-list').appendChild(mailListUL)
     
-
     if(emails.length === 0)
     {
       document.querySelector('#emails-emptytext').style.display = "block";
       document.querySelector('#archive-btn').style.display = "none"
+      document.querySelector('#reply-btn').style.display = "none"
       shownMailID = -1;
       return;
     }
     else
+    {
+      document.querySelector('#reply-btn').style.display = "inline-block"
       showEmail(emails[0])
+    }
 }
 
 function onMailClicked()
@@ -180,6 +183,7 @@ function showEmail(email)
   }
 
   shownMailID = email.id;
+  shownMail = email;
 }
 
 function markAsRead(email)
@@ -216,3 +220,25 @@ function archiveShownMail()
 
   load_mailbox('inbox')
 }
+
+function replyShownMail()
+{
+  if(shownMailID === -1)
+    return
+
+  compose_email()
+
+  // prefill recipient
+  let recipient = currentMailBox === "sent" ? shownMail.recipients : shownMail.sender;
+  document.querySelector('#compose-recipients').value = recipient
+
+  //Pre-fill the subject line. If the original email had a subject line of foo, the new subject line should be Re: foo. (If the subject line already begins with Re: , no need to add it again.)
+  let subject = shownMail.subject.startsWith("Re: ") ? shownMail.subject : "Re: " + shownMail.subject;
+  document.querySelector('#compose-subject').value = subject
+
+  //Pre-fill the body of the email with a line like "On Jan 1 2020, 12:00 AM foo@example.com wrote:" followed by the original text of the email.
+  let bodyPrefix = `\n\n On ${shownMail.timestamp} ${shownMail.sender} wrote:\n\n${shownMail.body}`;
+  document.querySelector('#compose-body').value = bodyPrefix
+  
+}
+

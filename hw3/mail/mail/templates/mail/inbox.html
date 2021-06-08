@@ -14,7 +14,10 @@
 <div id="emails-view">
     <div>
         <h3 id="emails-view-title" style="display: inline-block;"></h3>
-        <button id="archive-btn" type="button" style="float: right;"  class="btn btn-primary">Archive</button>
+        <div style="float: right;">
+            <button id="reply-btn" type="button" class="btn btn-primary">Reply</button>
+            <button id="archive-btn" type="button" class="btn btn-primary">Archive</button>
+        </div>
     </div>
     <div id="emails-div" class="row">
         <p id="emails-emptytext">No mails in this box</p>
@@ -25,7 +28,7 @@
             <p style="font-size:smaller"><b>Sender: </b> <span id="emails-sender"></span> </p>
             <p style="font-size:smaller"><b>Recipients: </b> <span id="emails-recipients"></span></p>
             <p style="font-size:smaller"><b>Subject: </b> <span id="emails-subject"></span></p>
-            <p id=emails-body></p>
+            <p style="white-space: pre-line" id=emails-body></p>
         </div>
     </div>
 </div>
