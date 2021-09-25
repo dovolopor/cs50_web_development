@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 
 # Create your views here.
@@ -11,7 +11,12 @@ def index(request):
 
 
 def flight(request, flightId):
-    flight = Flight.objects.get(pk=flightId)
+    try:
+        flight = Flight.objects.get(id=flightId)
+    except Flight.DoesNotExist:
+        raise Http404("Flight not found.")
+    
+    print(flight)
     return render(request, "flights/flight.html", 
         { 
             "flight": flight, 
