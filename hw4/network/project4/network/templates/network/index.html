@@ -1,5 +1,8 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
     TODO
 {% endblock %}

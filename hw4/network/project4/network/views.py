@@ -3,8 +3,8 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
-from .models import User
+from django.contrib.auth.decorators import login_required
+from .models import Post, User
 
 
 def index(request):
@@ -66,5 +66,18 @@ def register(request):
 def allPosts(request):
     return render(request, "network/allPosts.html")
 
+@login_required
 def addPost(request):
+    # Composing a new post must be via POST
+    if request.method != "POST":
+        return render(request, "network/index.html", {
+                "message": "Unknown error 74"
+            }) # todo error page
+
+    body = request.POST["post"]
+    post = Post(
+        poster=request.user,
+        body = body
+    )
+    post.save()
     return render(request, "network/index.html")
